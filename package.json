@@ -1,15 +1,25 @@
 {
-  "name": "zompp-mcp-server",
+  "name": "@strajkpolski/zompp-mcp-server",
   "version": "1.0.0",
   "description": "<div align=\"center\">   <h1>🚀 ZomPP MCP Server</h1>   <p><strong>Oficjalny serwer Model Context Protocol (MCP) dla platformy ZomPP.pl</strong></p> </div>",
-  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/index.js",
+  "bin": {
+    "zompp-mcp-server": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["mcp", "zompp"],
+  "author": "Hei33enberg",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@supabase/supabase-js": "^2.110.2",
