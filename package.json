@@ -1,7 +1,7 @@
 {
   "name": "zompp-mcp-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "<div align=\"center\">   <h1>🚀 ZomPP MCP Server</h1>   <p><strong>Oficjalny serwer Model Context Protocol (MCP) dla platformy ZomPP.pl</strong></p> </div>",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,11 +13,23 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@supabase/supabase-js": "^2.110.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^26.1.1",
     "ts-node": "^10.9.2",
     "typescript": "^7.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hei33enberg/zompp-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Hei33enberg/zompp-mcp-server/issues"
+  },
+  "homepage": "https://github.com/Hei33enberg/zompp-mcp-server#readme"
 }
