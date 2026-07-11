@@ -89,6 +89,85 @@ server.tool(
   }
 );
 
+// Tool: Search Legal Precedents (Wyroki, SN, TSUE)
+server.tool(
+  "search_legal_precedents",
+  "Search ZomPP's database of legal precedents, Supreme Court (SN) and CJEU (TSUE) rulings. Supports full-text search.",
+  {
+    query: z.string().describe("Search query (e.g. 'oszustwo komputerowe', 'art 286 kk')"),
+    court: z.string().optional().describe("Filter by court type, e.g. 'SN', 'TSUE'"),
+    limit: z.number().int().min(1).max(50).default(10).describe("Max results")
+  },
+  async ({ query, court, limit }) => {
+    // Perform Full-Text Search on public.legal_documents
+    let supabaseQuery = supabase
+      .from("legal_documents")
+      .select("id, title, court, signature, judgment_date, summary, slug");
+      
+    // Text search against the fts vector index
+    supabaseQuery = supabaseQuery.textSearch(
+      "fts",
+      query,
+      { config: 'polish' }
+    );
+
+    if (court) {
+      supabaseQuery = supabaseQuery.eq("court", court);
+    }
+
+    const { data, error } = await supabaseQuery.limit(limit);
+    
+    // Fallback to basic ILIKE search if textSearch throws or is empty
+    if (error || !data || data.length === 0) {
+      let fallbackQuery = supabase
+        .from("legal_documents")
+        .select("id, title, court, signature, judgment_date, summary, slug");
+      
+      if (court) fallbackQuery = fallbackQuery.eq("court", court);
+      
+      const { data: fallbackData, error: fallbackError } = await fallbackQuery
+        .or(`title.ilike.%${query}%,signature.ilike.%${query}%,summary.ilike.%${query}%`)
+        .limit(limit);
+        
+      if (fallbackError) {
+        return { content: [{ type: "text", text: `Error: ${fallbackError.message}` }], isError: true };
+      }
+      return { content: [{ type: "text", text: JSON.stringify(fallbackData, null, 2) }] };
+    }
+
+    return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+  }
+);
+
+// Tool: Get Legal Precedent Detail
+server.tool(
+  "get_legal_precedent",
+  "Fetch the complete text and metadata of a legal ruling by its signature or slug.",
+  {
+    signature: z.string().optional().describe("Signature of the ruling, e.g. 'II CSK 123/24'"),
+    slug: z.string().optional().describe("SEO slug of the ruling")
+  },
+  async ({ signature, slug }) => {
+    if (!signature && !slug) {
+      return { content: [{ type: "text", text: "You must provide either a signature or a slug" }], isError: true };
+    }
+
+    let query = supabase.from("legal_documents").select("*");
+    if (slug) {
+      query = query.eq("slug", slug);
+    } else {
+      query = query.eq("signature", signature);
+    }
+
+    const { data, error } = await query.maybeSingle();
+    if (error) return { content: [{ type: "text", text: `Error: ${error.message}` }], isError: true };
+    if (!data) return { content: [{ type: "text", text: "Precedent not found" }], isError: true };
+
+    return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+  }
+);
+
+
 // Initialize Server
 async function main() {
   const transport = new StdioServerTransport();
