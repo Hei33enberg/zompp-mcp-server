@@ -1,48 +1,66 @@
-# ZomPP MCP Server
+<div align="center">
+  <h1>🚀 ZomPP MCP Server</h1>
+  <p><strong>Oficjalny serwer Model Context Protocol (MCP) dla platformy ZomPP.pl</strong></p>
+</div>
 
-Official Model Context Protocol (MCP) Server for the [ZomPP Platform](https://zompp.pl). This server allows AI agents (like Claude) to directly interact with ZomPP's legal reporting database, diagnose AI orchestration status, and initiate report generations.
+---
 
-## Architecture & Integration
+## 📖 O projekcie
 
-This is a standalone TypeScript Node.js MCP server built with the official `@modelcontextprotocol/sdk`. It is designed to be hosted publicly on a VPS (e.g. Hetzner) or run locally by developers.
+**ZomPP MCP Server** to potężny, niezależny interfejs API zbudowany w oparciu o architekturę **Model Context Protocol**. Umożliwia on zewnętrznym agentom sztucznej inteligencji (np. Claude 3.5 Sonnet w aplikacji Claude Desktop, narzędziom orkiestracyjnym) na bezpośrednią, bezpieczną komunikację z silnikiem prawnym ZomPP.
 
-## Available MCP Tools
+Dzięki temu serwerowi, Twój lokalny lub chmurowy Agent AI zyskuje pełny wgląd w ekosystem ZomPP – od zarządzania wygenerowanymi zawiadomieniami po głęboką diagnostykę procesu twórczego (Chyłka-Pattern).
 
-- **`list_reports`**: Fetch a paginated list of ZomPP reports. Supports filtering by status (e.g. `paid`, `draft`).
-- **`get_report`**: Retrieve the full JSON schema of a specific report using its UUID.
-- **`diagnose_orchestration`**: A diagnostic tool that analyzes the generated legal sections (the Chyłka-Pattern engine output) to detect AI fallback failures or stuck generation loops.
+## 🛠️ Dostępne Narzędzia (Tool Catalog)
 
-## Running Locally for Claude Desktop
+Serwer wystawia następujące narzędzia (Tools) gotowe do użycia przez LLM:
 
-To test this server locally with Claude Desktop, you don't need Docker. Just run it via `ts-node`:
+* 📋 **`list_reports`** — Pobiera stronicowaną listę zawiadomień ZomPP z bazy Supabase. Pozwala na zaawansowane filtrowanie po statusach (np. `paid`, `draft`).
+* 🔍 **`get_report`** — Zwraca pełny, surowy zrzut danych JSON konkretnego raportu na podstawie jego UUID.
+* 🧠 **`diagnose_orchestration`** — Zaawansowane narzędzie diagnostyczne. Agent analizuje wygenerowane sekcje prawne (output silnika Chyłki), wykrywa zablokowane pętle, zlicza sekcje i diagnozuje błędy mechanizmów *Fallback*.
 
-1. Clone this repository.
-2. Run `npm install`.
-3. Add the following to your `claude_desktop_config.json`:
+## 💻 Uruchomienie lokalne (Claude Desktop)
 
-```json
-{
-  "mcpServers": {
-    "zompp-mcp": {
-      "command": "npx",
-      "args": ["ts-node", "/absolute/path/to/zompp-mcp-server/src/index.ts"],
-      "env": {
-        "SUPABASE_URL": "https://jbgfptzpnhedukqfudkr.supabase.co",
-        "SUPABASE_ANON_KEY": "YOUR_ANON_KEY",
-        "SUPABASE_SERVICE_ROLE": "YOUR_SERVICE_ROLE_KEY"
-      }
-    }
-  }
-}
-```
+Aby podpiąć ZomPP bezpośrednio pod Twojego lokalnego asystenta Claude Desktop, nie potrzebujesz Dockera. Wystarczy uruchomić serwer w locie przez `ts-node`.
 
-## Hosting on Hetzner VPS (Docker Compose)
+1. Sklonuj repozytorium:
+   ```bash
+   git clone https://github.com/Hei33enberg/zompp-mcp-server.git
+   cd zompp-mcp-server
+   npm install
+   ```
 
-For production usage (e.g. hooking this MCP to an external agent network):
+2. Dodaj poniższą konfigurację do pliku `claude_desktop_config.json`:
+   ```json
+   {
+     "mcpServers": {
+       "zompp-mcp": {
+         "command": "npx",
+         "args": ["ts-node", "/BEZWZGLEDNA/SCIEZKA/DO/zompp-mcp-server/src/index.ts"],
+         "env": {
+           "SUPABASE_URL": "https://jbgfptzpnhedukqfudkr.supabase.co",
+           "SUPABASE_ANON_KEY": "TWÓJ_KLUCZ_ANON_KEY",
+           "SUPABASE_SERVICE_ROLE": "TWÓJ_KLUCZ_SERVICE_ROLE"
+         }
+       }
+     }
+   }
+   ```
 
-1. Clone repo onto your Hetzner VPS.
-2. Create a `.env` file with your keys.
-3. Run:
-```bash
-docker-compose up -d --build
-```
+## ☁️ Wdrożenie Produkcyjne (Hetzner VPS)
+
+Serwer jest w 100% gotowy na wdrożenie kontenerowe (Docker) na maszynach typu VPS (np. Hetzner Cloud), co pozwala wpiąć go w globalną sieć agentów (np. platformy *White Intel* czy *Marocain*).
+
+1. Zaloguj się na swojego VPS-a i sklonuj to repozytorium.
+2. Utwórz plik `.env` i wklej swoje klucze Supabase.
+3. Odpal środowisko jedną komendą:
+   ```bash
+   docker-compose up -d --build
+   ```
+
+System automatycznie zbuduje lekki obraz oparty na `node:20-alpine` i uruchomi serwer MCP w tle.
+
+---
+<div align="center">
+  <i>Zbudowane z pasją dla ZomPP. Wszelkie prawa zastrzeżone.</i>
+</div>
